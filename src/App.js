@@ -10,7 +10,7 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/detail" element={<Detail />} />
+        <Route path="/detail/:iso" element={<Detail />} />
       </Routes>
     </BrowserRouter>
   );
