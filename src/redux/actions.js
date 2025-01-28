@@ -6,5 +6,5 @@ export const getDetails = createAsyncThunk("covid/getDetails", async (iso) => {
     params: { iso: iso },
   });
 
-  return res;
+  return res.data?.data[0];
 });

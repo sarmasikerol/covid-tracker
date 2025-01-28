@@ -8,10 +8,11 @@ const Heading = () => {
   const { data,isLoading } = useSelector((store) => store);
   const { iso } = useParams();
   
-  const cn = (data?.data.data[0]?.name);
+  
   const flag = `https://flagsapi.com/${iso}/flat/64.png`;
   const [isFlagError, setIsFlagError] = useState(false); // Görsel hatasını takip etmek için state
 
+    console.log(data)
   return (
     <div className="flex justify-between items-center">
       <Link
@@ -25,10 +26,10 @@ const Heading = () => {
       {isLoading ? (
         <HeaderLoader />
       ) : (
-        data && (
+        data && ( 
           <div className="flex items-center gap-4">
             <h1 className="text-gray-900 text-2xl lg:text-3xl font-bold font-sans">
-            {cn}
+            {data.iso}
             </h1>
             {!isFlagError ? (
               <img

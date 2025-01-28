@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 // Ülke isimlerine karşılık ISO kodlarını içeren eşleme tablosu
 const countryToIso = {
   "India": "IN",
-  "United States of America": "US",
+  "United States of America": "USA",
   "Brazil": "BR",
   "Turkey": "TR",
   "China": "CHN",

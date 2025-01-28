@@ -1,9 +1,9 @@
-import React from 'react'
-
 const HeaderLoader = () => {
   return (
-    <div>HeaderLoader</div>
-  )
-}
+    <div data-testid="header-loader" className="flex items-center gap-2">
+      <div className="bg-gray-300 h-10 w-[120px] rounded-md animate-pulse"></div>
+    </div>
+  );
+};
 
-export default HeaderLoader
+export default HeaderLoader;
