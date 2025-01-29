@@ -3,29 +3,27 @@ import Statistics from "../pages/home/Statistics";
 import api from "../api";
 import millify from "millify";
 
-// API mock dosyasını import et
+// API modülünü mockla
 jest.mock("../api");
 
-// testler kesinlikle api isteklerine bağılmlı olmamalı api'dan gelicek cevap testin geçip geçmem durumunu etkilememli. api modülünü mocklayıp api' modülünün göndereceği cevapların sahte bir versitonunu göndericez bu sayede test ortamında gerçekten api isteği atıp cevap beklemek yerine bizim sahte cevaplarımıza göre test yapıcaz
-
-describe("istatistik component testleri", () => {
-  // her testten önce mockfonksiyonlarını resetledik
+describe("Statistics Component Tests", () => {
+  // Her testten önce mock fonksiyonlarını sıfırla
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("bileşen renderlandığında ekrana loader gelir", async () => {
-    // api.get isteği bileşen içerisnde tetiklendiği zaman hangi cevabın gönderilmesi gerektiğini belirtir
+  test("Component renders loader initially", async () => {
+    // Mock API çağrısı boş bir cevap döndürsün
     api.get.mockResolvedValueOnce({ data: [] });
 
-    // bileşeni renderla
+    // Bileşeni renderla
     render(<Statistics />);
 
-    // elementi çağırma onun aynı zamanda ekranda'mı testini yapmaya eşdeğdir o yüzden ekstra olarak toBeIntheDocument yazmaya gerek yok
-    screen.getByTestId("home-loader");
+    // Loader elementinin ekranda olduğunu doğrula
+    expect(screen.getByTestId("home-loader")).toBeInTheDocument();
   });
 
-  test("loader'ın ardından ekrana istatistikler gelir", async () => {
+  test("Statistics appear after the loader", async () => {
     const totals = {
       confirmed: 701166431,
       recovered: 590451974,
@@ -35,46 +33,44 @@ describe("istatistik component testleri", () => {
       lastUpdate: "2024-08-09T09:13:41+00:00",
     };
 
-    // api isteği atılınca olumlu cevap gitemsini söyledik ve gidicek cevabın içeriğini belirledik
+    // Mock API çağrısı sahte bir cevap döndürsün
     api.get.mockResolvedValueOnce({ data: [totals] });
 
-    // bileşeni renderla
+    // Bileşeni renderla
     render(<Statistics />);
 
-    // waitfor ile loader ekrandan gidene kadar bekle diyoruz
+    // Loader'ın kaybolmasını bekle
     await waitFor(() =>
       expect(screen.queryByTestId("home-loader")).not.toBeInTheDocument()
     );
 
-    // ekranda toplam vaka başlığı ve sayısı yazıyor mu?
-    expect(screen.getByText(/toplam vaka/i));
-    expect(screen.getByText(millify(totals.confirmed)));
+    // İstatistiklerin doğru bir şekilde renderlandığını doğrula
+    expect(screen.getByText(/toplam vaka/i)).toBeInTheDocument();
+    expect(screen.getByText(millify(totals.confirmed))).toBeInTheDocument();
 
-    // ekranda toplam iyileşen başlığı ve sayısı yazıyor mu?
-    expect(screen.getByText("Toplam İyileşen"));
-    expect(screen.getByText(millify(totals.recovered)));
+    expect(screen.getByText("Toplam İyileşen")).toBeInTheDocument();
+    expect(screen.getByText(millify(totals.recovered))).toBeInTheDocument();
 
-    // ekranda toplam vefat başlığı ve sayısı yazıyor mu?
-    expect(screen.getByText(/toplam vefat/i));
-    expect(screen.getByText(millify(totals.deaths)));
+    expect(screen.getByText(/toplam vefat/i)).toBeInTheDocument();
+    expect(screen.getByText(millify(totals.deaths))).toBeInTheDocument();
   });
 
-  test("hata durumunda erkanda sadedce hata yazar", async () => {
-    // api isteği atılıdğında olumsuz bir cevap gönderilmesi gerektiğini söyle
+  test("Displays error message on API failure", async () => {
+    // Mock API çağrısı hata döndürsün
     api.get.mockRejectedValueOnce(new Error("Zaman aşımına uğradı"));
 
-    // bileşeni renderla
+    // Bileşeni renderla
     render(<Statistics />);
 
-    // ekrandan loader gidene kadar bekle
+    // Loader'ın kaybolmasını bekle
     await waitFor(() =>
       expect(screen.queryByTestId("home-loader")).not.toBeInTheDocument()
     );
 
-    // toplam vaka başlığı ekranda yoktur
-    expect(screen.queryByText(/toplam vaka/i)).not.toBeInTheDocument();
+    // Hata mesajının ekranda olduğunu doğrula
+    expect(screen.getByText(/bir hata oluştu/i)).toBeInTheDocument();
 
-    // erkanda istatistikler alınamıyor yazar
-    screen.getByText("İstatistikler alınamıyor...");
+    // İstatistik başlıklarının ekranda olmadığını doğrula
+    expect(screen.queryByText(/toplam vaka/i)).not.toBeInTheDocument();
   });
 });
